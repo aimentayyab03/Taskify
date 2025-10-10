@@ -1,43 +1,38 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
-import '../App.css';
-import { BACKEND_URL } from '../config';
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
+const path = require('path');
 
-export default function Login() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const app = express();
 
-  const handleLogin = async e => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(`${BACKEND_URL}/api/auth/login`, { email, password });
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('username', res.data.user.username);
-      localStorage.setItem('email', res.data.user.email);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-    }
-  };
+// ------------------- CORS -------------------
+// Allow local frontend on 3000 and Postman
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  credentials: true
+}));
 
-  return (
-    <div className="auth-page">
-      <div className="auth-box">
-        <h1 className="brand-name">Taskify</h1>
-        <h2 className="auth-title">Welcome Back 👋</h2>
-        {error && <p className="error-msg">{error}</p>}
-        <form onSubmit={handleLogin} className="auth-form">
-          <input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-          <button type="submit" className="auth-btn">Login</button>
-        </form>
-        <p className="auth-footer">
-          Don’t have an account? <Link to="/signup">Sign up</Link>
-        </p>
-      </div>
-    </div>
-  );
-}
+app.use(express.json());
+
+// ------------------- Routes -------------------
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/tasks', require('./routes/tasks'));
+
+// ------------------- Serve React Frontend (optional for local dev) -------------------
+const __dirnameResolved = path.resolve();
+app.use(express.static(path.join(__dirnameResolved, 'frontend', 'build')));
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirnameResolved, 'frontend', 'build', 'index.html'));
+});
+
+// ------------------- MongoDB & Server -------------------
+const PORT = process.env.PORT || 5000;
+
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(err => console.log('MongoDB connection error:', err));
