@@ -3,8 +3,17 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
+console.log('MONGO_URI:', process.env.MONGO_URI);
+
 const app = express();
-app.use(cors());
+const allowedOrigin = 'http://taskify-devops-bucket.s3-website.eu-north-1.amazonaws.com';
+
+app.use(cors({
+  origin: allowedOrigin,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true, // optional if you use cookies
+}));
 app.use(express.json());
 
 // Routes
