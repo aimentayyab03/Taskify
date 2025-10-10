@@ -1,10 +1,16 @@
+// src/config.js
+
 let backendUrl;
 
-if (process.env.NODE_ENV === 'development') {
+if (window.location.hostname === 'localhost') {
+  // Local development
   backendUrl = 'http://localhost:5000';
 } else {
-  // Default (production, e.g., Elastic Beanstalk)
+  // Production (your EC2 public IP)
   backendUrl = 'http://13.53.187.249:5000';
 }
 
-export default backendUrl;
+const BACKEND_URL = backendUrl;
+
+export { BACKEND_URL };
+
