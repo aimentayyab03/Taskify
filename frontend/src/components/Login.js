@@ -9,33 +9,17 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async e => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
     try {
-      // Make login request to backend
-      const res = await axios.post(`${BACKEND_URL}/api/auth/login`, {
-        email,
-        password,
-      });
-
-      // Clear previous tokens before setting new ones
-      localStorage.clear();
+      const res = await axios.post(`${BACKEND_URL}/api/auth/login`, { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('username', res.data.user.username);
       localStorage.setItem('email', res.data.user.email);
-
-      // Navigate to dashboard on success
       navigate('/dashboard');
     } catch (err) {
-      // Display backend error message (if available)
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(err.response?.data?.message || 'Login failed');
     }
   };
 
@@ -44,36 +28,12 @@ export default function Login() {
       <div className="auth-box">
         <h1 className="brand-name">Taskify</h1>
         <h2 className="auth-title">Welcome Back 👋</h2>
-
-        {/* Error Message */}
         {error && <p className="error-msg">{error}</p>}
-
         <form onSubmit={handleLogin} className="auth-form">
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <button
-            type="submit"
-            className="auth-btn"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+          <input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <button type="submit" className="auth-btn">Login</button>
         </form>
-
         <p className="auth-footer">
           Don’t have an account? <Link to="/signup">Sign up</Link>
         </p>
@@ -81,4 +41,3 @@ export default function Login() {
     </div>
   );
 }
-

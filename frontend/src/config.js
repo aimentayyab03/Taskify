@@ -6,11 +6,10 @@ if (window.location.hostname === 'localhost') {
   // Local development
   backendUrl = 'http://localhost:5000';
 } else {
-  // Production (your EC2 public IP)
-  backendUrl = 'http://13.53.187.249:5000';
+  // Production (EC2)
+  backendUrl = 'http://13.60.249.192:5000';
 }
 
 const BACKEND_URL = backendUrl;
 
 export { BACKEND_URL };
-
