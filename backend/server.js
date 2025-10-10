@@ -10,8 +10,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',        // Local frontend
   'http://localhost:5000',        // Local backend if accessed directly
-  'http://13.53.187.249',         // EC2 frontend (React app hosted on EC2)
-  'http://13.53.187.249:5000'     // EC2 backend (if accessed directly)
+  'http://13.60.249.192',         // EC2 frontend (React app hosted on EC2)
+  'http://13.60.249.192:5000'     // EC2 backend (if accessed directly)
 ];
 
 app.use(cors({
