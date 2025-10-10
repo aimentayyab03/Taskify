@@ -15,10 +15,11 @@ export default function Login() {
     try {
       const res = await axios.post(`${BACKEND_URL}/api/auth/login`, { email, password });
       localStorage.setItem('token', res.data.token);
-      localStorage.setItem('username', res.data.user.username);
-      localStorage.setItem('email', res.data.user.email);
+      localStorage.setItem('username', res.data.username); // changed res.data.user.username -> res.data.username
+      localStorage.setItem('email', email);
       navigate('/dashboard');
     } catch (err) {
+      console.error('Login error:', err.response?.data || err);
       setError(err.response?.data?.message || 'Login failed');
     }
   };
@@ -30,8 +31,20 @@ export default function Login() {
         <h2 className="auth-title">Welcome Back 👋</h2>
         {error && <p className="error-msg">{error}</p>}
         <form onSubmit={handleLogin} className="auth-form">
-          <input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
           <button type="submit" className="auth-btn">Login</button>
         </form>
         <p className="auth-footer">
