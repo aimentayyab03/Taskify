@@ -6,7 +6,7 @@ if (window.location.hostname === 'localhost') {
   backendUrl = 'http://localhost:5000';
 } else {
   // EC2 deployment
-  backendUrl = 'http://13.60.249.192:5000';
+  backendUrl = 'https://taskify-backend-env.eba-uac59zxd.us-east-1.elasticbeanstalk.com';
 }
 
 export const BACKEND_URL = backendUrl;
