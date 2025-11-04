@@ -1,24 +1,26 @@
+version: "3.8"
 
 services:
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
-    container_name: backend
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: taskify-backend
     restart: always
-    environment:
-      - MONGO_URI=mongodb+srv://aimentayyab215_db_user:aimentayyab12@tasks.u0nwhtm.mongodb.net/
-      - PORT=5000
     ports:
       - "5000:5000"
+    environment:
+      - MONGO_URI="mongodb+srv://aimentayyab215_db_user:aimentayyab12@tasks.u0nwhtm.mongodb.net/"
+      - JWT_SECRET="7b9ab08e43eeb8245920990f5eea7c513a495338b5fe8ec3e51971ea46077e08bd3df090c2c49fb63fe59d7d347f5bc955564f20846d9a5db0dc9eb"
+      - PORT=5000
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: frontend
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: taskify-frontend
     restart: always
     ports:
-      - "3000:80"
+      - "80:80"
     depends_on:
       - backend
