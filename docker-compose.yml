@@ -1,22 +1,22 @@
-version: "3.8"
+version: '3.8'
 
 services:
   backend:
-    image: aimen123/taskify-backend:latest
-    container_name: taskify-backend
-    restart: always
+    build:
+      context: ./backend
+    container_name: backend
     ports:
       - "5000:5000"
-    environment:
-      - MONGO_URI=mongodb+srv://aimentayyab215_db_user:aimentayyab12@tasks.u0nwhtm.mongodb.net/task12for
-      - JWT_SECRET=7b9ab08e43eeb8245920990f5eea7c513a495338b5fe8ec3e51971ea46077e08bd3df090c2c49fb63fe59d7d347f5bc955564f20846d9a5db0dc9eb
-      - PORT=5000
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
 
   frontend:
-    image: aimen123/taskify-frontend:latest
-    container_name: taskify-frontend
-    restart: always
+    build:
+      context: ./frontend
+    container_name: frontend
     ports:
-      - "80:80"
+      - "8080:80"  # Changed to 8080 to avoid port 80 conflicts
     depends_on:
       - backend
+    restart: unless-stopped
