@@ -10,13 +10,21 @@ services:
     env_file:
       - ./backend/.env
     restart: unless-stopped
+    networks:
+      - app-network
 
   frontend:
     build:
       context: ./frontend
     container_name: frontend
     ports:
-      - "8080:80"  # Changed to 8080 to avoid port 80 conflicts
+      - "8080:80"
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
