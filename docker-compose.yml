@@ -35,8 +35,6 @@ version: '3.8'
 
 services:
   backend:
-    build:
-      context: ./backend
     image: aimen123/backend
     container_name: backend
     ports:
@@ -50,8 +48,6 @@ services:
       - app-network
 
   frontend:
-    build:
-      context: ./frontend
     image: aimen123/frontend
     container_name: frontend
     ports:
@@ -62,7 +58,6 @@ services:
     networks:
       - app-network
 
-  # Dummy Mongo container (for persistence requirement)
   mongo:
     image: mongo:6
     container_name: mongo
