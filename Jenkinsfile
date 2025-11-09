@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone GitHub Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/aimentayyab03/Taskify.git'
+                git branch: 'master', url: 'https://github.com/aimentayyab03/Taskify.git'
             }
         }
 
