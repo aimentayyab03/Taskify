@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    image: aimen123/taskify-backend:latest
+    image: aimen123/backend:latest
     container_name: backend-jenkins
     ports:
       - "5001:5000"      # Changed to avoid conflict with Part-I
@@ -15,7 +15,7 @@ services:
       - app-network
 
   frontend:
-    image: aimen123/taskify-frontend:latest
+    image: aimen123/frontend:latest
     container_name: frontend-jenkins
     ports:
       - "8082:80"         # Changed port to avoid conflict
