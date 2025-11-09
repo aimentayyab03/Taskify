@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_USERNAME = 'aimen123'
-        DOCKERHUB_PASSWORD = credentials('DOCKER_HUB_PASSWORD') // Jenkins secret
+        DOCKERHUB_PASSWORD = credentials('DOCKER_HUB_PASSWORD') // Jenkins secret text
     }
 
     stages {
@@ -13,23 +13,24 @@ pipeline {
             }
         }
 
-        stage('Build and Run Containers') {
+        stage('Login to DockerHub') {
             steps {
                 script {
-                    // Login to Docker Hub securely
-                    sh 'echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin'
-
-                    // Build and run containers using docker-compose
-                    sh 'docker-compose -f docker-compose.yml up -d --build'
+                    // Login to Docker Hub
+                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
                 }
             }
         }
 
-        stage('Push Docker Images to Hub') {
+        stage('Pull and Run Containers') {
             steps {
                 script {
-                    sh "docker push ${DOCKERHUB_USERNAME}/taskify-backend:latest"
-                    sh "docker push ${DOCKERHUB_USERNAME}/taskify-frontend:latest"
+                    // Pull images from DockerHub
+                    sh 'docker pull aimen123/taskify-backend:latest'
+                    sh 'docker pull aimen123/taskify-frontend:latest'
+
+                    // Run containers using docker-compose
+                    sh 'docker-compose -f docker-compose.yml up -d'
                 }
             }
         }
@@ -37,6 +38,7 @@ pipeline {
 
     post {
         always {
+            // Verify running containers
             sh 'docker ps -a'
         }
     }
