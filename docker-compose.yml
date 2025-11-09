@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend      # Instead of pulling prebuilt image, Jenkins will build from code
+    image: aimen123/taskify-backend:latest
     container_name: backend-jenkins
     ports:
       - "5001:5000"      # Changed to avoid conflict with Part-I
@@ -13,11 +13,9 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-    volumes:
-      - ./backend:/app/backend  # Volume for live code updates
 
   frontend:
-    build: ./frontend
+    image: aimen123/taskify-frontend:latest
     container_name: frontend-jenkins
     ports:
       - "8082:80"         # Changed port to avoid conflict
@@ -26,8 +24,6 @@ services:
     restart: unless-stopped
     networks:
       - app-network
-    volumes:
-      - ./frontend:/app/frontend
 
   mongo:
     image: mongo:6
