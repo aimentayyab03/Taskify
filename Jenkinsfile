@@ -22,14 +22,25 @@ pipeline {
             }
         }
 
+        stage('Stop and Remove Old Containers') {
+            steps {
+                script {
+                    // Stop and remove existing Part-II containers to avoid conflicts
+                    sh '''
+                        docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
+                    '''
+                }
+            }
+        }
+
         stage('Pull and Run Containers') {
             steps {
                 script {
-                    // Pull images from DockerHub
+                    // Pull latest images
                     sh 'docker pull aimen123/backend:latest'
                     sh 'docker pull aimen123/frontend:latest'
 
-                    // Run containers using docker-compose
+                    // Run containers using updated docker-compose
                     sh 'docker-compose -f docker-compose.yml up -d'
                 }
             }
@@ -38,7 +49,7 @@ pipeline {
 
     post {
         always {
-            // Verify running containers
+            // List running containers for verification
             sh 'docker ps -a'
         }
     }
