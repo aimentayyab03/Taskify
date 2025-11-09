@@ -16,8 +16,8 @@ pipeline {
         stage('Build and Run Containers') {
             steps {
                 script {
-                    // Login to Docker Hub
-                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
+                    // Login to Docker Hub securely
+                    sh 'echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin'
 
                     // Build and run containers using docker-compose
                     sh 'docker-compose -f docker-compose.yml up -d --build'
@@ -28,9 +28,7 @@ pipeline {
         stage('Push Docker Images to Hub') {
             steps {
                 script {
-                    // Push backend image
                     sh "docker push ${DOCKERHUB_USERNAME}/taskify-backend:latest"
-                    // Push frontend image
                     sh "docker push ${DOCKERHUB_USERNAME}/taskify-frontend:latest"
                 }
             }
@@ -39,7 +37,6 @@ pipeline {
 
     post {
         always {
-            // Verify running containers
             sh 'docker ps -a'
         }
     }
