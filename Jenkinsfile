@@ -20,7 +20,7 @@ pipeline {
                     sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
 
                     // Build and run containers using docker-compose
-                    sh 'docker-compose -f docker-compose-jenkins.yml up -d --build'
+                    sh 'docker-compose -f docker-compose.yml up -d --build'
                 }
             }
         }
