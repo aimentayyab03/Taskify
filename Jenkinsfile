@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'aimen123/taskify:latest'
+        DOCKERHUB_USERNAME = 'aimen123'
+        DOCKERHUB_PASSWORD = credentials('DOCKER_HUB_PASSWORD') // Jenkins secret
     }
 
     stages {
@@ -12,30 +13,25 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Run Containers') {
             steps {
                 script {
-                    // Build Docker image from Dockerfile
-                    docker.build("${DOCKER_IMAGE}")
+                    // Login to Docker Hub
+                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
+
+                    // Build and run containers using docker-compose
+                    sh 'docker-compose -f docker-compose-jenkins.yml up -d --build'
                 }
             }
         }
 
-        stage('Push Docker Image to Hub') {
+        stage('Push Docker Images to Hub') {
             steps {
                 script {
-                    // Log in to Docker Hub and push
-                    sh 'echo $DOCKER_HUB_PASSWORD | docker login -u aimen123 --password-stdin'
-                    docker.push("${DOCKER_IMAGE}")
-                }
-            }
-        }
-
-        stage('Run Containers') {
-            steps {
-                script {
-                    // Run containers using modified docker-compose for Jenkins
-                    sh 'docker-compose -f docker-compose-jenkins.yml up -d'
+                    // Push backend image
+                    sh "docker push ${DOCKERHUB_USERNAME}/taskify-backend:latest"
+                    // Push frontend image
+                    sh "docker push ${DOCKERHUB_USERNAME}/taskify-frontend:latest"
                 }
             }
         }
@@ -43,7 +39,7 @@ pipeline {
 
     post {
         always {
-            // Show running containers for verification
+            // Verify running containers
             sh 'docker ps -a'
         }
     }
