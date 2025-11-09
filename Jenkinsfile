@@ -26,8 +26,8 @@ pipeline {
             steps {
                 script {
                     // Pull images from DockerHub
-                    sh 'docker pull aimen123/taskify-backend:latest'
-                    sh 'docker pull aimen123/taskify-frontend:latest'
+                    sh 'docker pull aimen123/backend:latest'
+                    sh 'docker pull aimen123/frontend:latest'
 
                     // Run containers using docker-compose
                     sh 'docker-compose -f docker-compose.yml up -d'
