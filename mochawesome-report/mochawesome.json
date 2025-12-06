@@ -1,0 +1,850 @@
+{
+  "stats": {
+    "suites": 10,
+    "tests": 11,
+    "passes": 11,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-12-06T22:25:09.698Z",
+    "end": "2025-12-06T22:26:51.949Z",
+    "duration": 102251,
+    "testsRegistered": 11,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "7dbf424f-8b71-43e0-a531-57472bc8bfeb",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "53457ea5-0b99-4b7f-a077-d0fb42fb5526",
+          "title": "Add Task Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\addTask.test.js",
+          "file": "\\tests\\addTask.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Add Task Test\"",
+              "fullTitle": "Add Task Test \"before all\" hook in \"Add Task Test\"",
+              "timedOut": false,
+              "duration": 1948,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Headless Chrome setup\nlet options = new chrome.Options();\noptions.addArguments('--headless'); // Run in headless mode\noptions.addArguments('--no-sandbox'); // Needed for Linux/EC2\noptions.addArguments('--disable-dev-shm-usage'); // Prevent limited resource issues\noptions.addArguments('--window-size=1920,1080'); // Standard viewport\ndriver = await new Builder()\n  .forBrowser('chrome')\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "31886254-770b-4ad6-81ad-ba5e1ca17ea9",
+              "parentUUID": "53457ea5-0b99-4b7f-a077-d0fb42fb5526",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Add Task Test\"",
+              "fullTitle": "Add Task Test \"after all\" hook in \"Add Task Test\"",
+              "timedOut": false,
+              "duration": 158,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "8c2f017e-fadd-4dc5-bc4c-47ce4214292c",
+              "parentUUID": "53457ea5-0b99-4b7f-a077-d0fb42fb5526",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should add a new task successfully",
+              "fullTitle": "Add Task Test should add a new task successfully",
+              "timedOut": false,
+              "duration": 7664,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const BASE_URL = 'http://localhost:3000';\n// 1. Open login page\nawait driver.get(BASE_URL + '/login');\n// 2. Fill login form\nawait driver.findElement(By.css('input[type=\"email\"]'))\n  .sendKeys('aimentayyab215@gmail.com');\nawait driver.findElement(By.css('input[type=\"password\"]'))\n  .sendKeys('aimen12');\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// 3. Wait for dashboard URL\nawait driver.wait(until.urlContains('/dashboard'), 15000);\n// 4. Ensure \"All Tasks\" view is selected\nconst allTasksBtn = await driver.findElement(By.xpath(\"//button[contains(text(),'All')]\"));\nawait allTasksBtn.click();\n// 5. Wait for \"Add Task\" input to appear\nawait driver.wait(\n  until.elementLocated(By.css('input[placeholder=\"Enter new task...\"]')),\n  10000\n);\n// 6. Fill new task form\nconst taskTitle = 'Selenium Test Task';\nawait driver.findElement(By.css('input[placeholder=\"Enter new task...\"]')).sendKeys(taskTitle);\nawait driver.findElement(By.css('select')).sendKeys('Work');\n// Use date in format expected by the app (12-06-2025 style)\nconst taskDate = '12-06-2025';\nawait driver.findElement(By.css('input[type=\"date\"]')).sendKeys(taskDate);\n// 7. Click \"Add Task\"\nawait driver.findElement(By.css('button.add-btn')).click();\n// 8. Wait for new task to appear in the list\nconst newTask = await driver.wait(\n  until.elementLocated(By.xpath(`//div[contains(@class,'task-title') and text()='${taskTitle}']`)),\n  10000\n);\nconst taskText = await newTask.getText();\nassert.strictEqual(taskText, taskTitle);",
+              "err": {},
+              "uuid": "7e59dcb9-79c7-4ef8-9117-0b7c8cc472c4",
+              "parentUUID": "53457ea5-0b99-4b7f-a077-d0fb42fb5526",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "7e59dcb9-79c7-4ef8-9117-0b7c8cc472c4"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 7664,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 40000
+        },
+        {
+          "uuid": "98716edb-6279-4f48-92b0-2e05cdfed345",
+          "title": "Taskify – Add Task Validation",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\addTaskValidation.test.js",
+          "file": "\\tests\\addTaskValidation.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Taskify – Add Task Validation\"",
+              "fullTitle": "Taskify – Add Task Validation \"before all\" hook in \"Taskify – Add Task Validation\"",
+              "timedOut": false,
+              "duration": 1480,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Headless Chrome options\nlet options = new chrome.Options();\noptions.addArguments(\"--headless\");\noptions.addArguments(\"--no-sandbox\");\noptions.addArguments(\"--disable-dev-shm-usage\");\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "04037083-0ee3-41f9-b53c-c70be7987457",
+              "parentUUID": "98716edb-6279-4f48-92b0-2e05cdfed345",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Taskify – Add Task Validation\"",
+              "fullTitle": "Taskify – Add Task Validation \"after all\" hook in \"Taskify – Add Task Validation\"",
+              "timedOut": false,
+              "duration": 218,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "96e070b2-848a-4834-a91f-554d33f667c6",
+              "parentUUID": "98716edb-6279-4f48-92b0-2e05cdfed345",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should show validation for empty fields, then add task successfully",
+              "fullTitle": "Taskify – Add Task Validation should show validation for empty fields, then add task successfully",
+              "timedOut": false,
+              "duration": 15297,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const BASE_URL = \"http://localhost:3000\";\n// --- LOGIN ---\nawait driver.get(BASE_URL + \"/login\");\nawait driver.findElement(By.css(\"input[placeholder='Email address']\")).sendKeys(\"aimentayyab215@gmail.com\");\nawait driver.findElement(By.css(\"input[placeholder='Password']\")).sendKeys(\"aimen12\");\nawait driver.findElement(By.css(\"button[type='submit']\")).click();\n// Wait for dashboard\nawait driver.wait(until.urlContains(\"/dashboard\"), 15000);\nawait driver.sleep(2000);\n// --- COUNT INITIAL TASKS ---\nlet initialTasks = await driver.findElements(By.css(\".task-card\"));\nconst initialCount = initialTasks.length;\n// --- TRY ADDING TASK WITH EMPTY FIELDS ---\nawait driver.findElement(By.css(\"input[placeholder='Enter new task...']\")).clear();\nawait driver.findElement(By.css(\"select\")).sendKeys(\"\");\nawait driver.findElement(By.css(\"input[type='date']\")).clear();\nawait driver.findElement(By.css(\"button.add-btn\")).click();\nawait driver.sleep(1500);\nlet afterEmptyAttempt = await driver.findElements(By.css(\".task-card\"));\nexpect(afterEmptyAttempt.length).to.equal(initialCount);\n// --- ADD VALID TASK ---\nconst title = \"Selenium Task \" + Date.now();\n// Format date as YYYY-MM-DD for input[type=date]\nconst today = new Date();\nconst yyyy = today.getFullYear();\nconst mm = String(today.getMonth() + 1).padStart(2, \"0\"); // months are 0-indexed\nconst dd = String(today.getDate()).padStart(2, \"0\");\nconst formattedDate = `${mm}-${dd}-${yyyy}`; // Correct format for date input\nawait driver.findElement(By.css(\"input[placeholder='Enter new task...']\")).sendKeys(title);\nawait driver.findElement(By.css(\"select\")).sendKeys(\"Work\");\nawait driver.findElement(By.css(\"input[type='date']\")).sendKeys(formattedDate);\nawait driver.findElement(By.css(\"button.add-btn\")).click();\nawait driver.sleep(2000);\n// --- CHECK TASK ADDED ---\nlet finalTasks = await driver.findElements(By.css(\".task-card\"));\nexpect(finalTasks.length).to.equal(initialCount + 1);\nconst titles = await driver.findElements(By.css(\".task-card .task-title\"));\nlet found = false;\nfor (let t of titles) {\n  const txt = (await t.getText()).toLowerCase();\n  if (txt.includes(\"selenium\")) found = true;\n}\nexpect(found).to.equal(true);",
+              "err": {},
+              "uuid": "7779dd3d-8c68-4289-83fb-046659e35047",
+              "parentUUID": "98716edb-6279-4f48-92b0-2e05cdfed345",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "7779dd3d-8c68-4289-83fb-046659e35047"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 15297,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "18d0e7c9-6583-49a3-a35f-a8f60746825e",
+          "title": "Dashboard Page Tests",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\dashboard.test.js",
+          "file": "\\tests\\dashboard.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Dashboard Page Tests\"",
+              "fullTitle": "Dashboard Page Tests \"before all\" hook in \"Dashboard Page Tests\"",
+              "timedOut": false,
+              "duration": 1435,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// Headless Chrome options\nlet options = new chrome.Options();\noptions.addArguments(\"--headless\"); // Run headless\noptions.addArguments(\"--no-sandbox\"); // Needed for Linux/EC2\noptions.addArguments(\"--disable-dev-shm-usage\"); // Prevent limited resource issues\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "9431ca95-27b5-44f9-80c2-b1633c17c964",
+              "parentUUID": "18d0e7c9-6583-49a3-a35f-a8f60746825e",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Dashboard Page Tests\"",
+              "fullTitle": "Dashboard Page Tests \"after all\" hook in \"Dashboard Page Tests\"",
+              "timedOut": false,
+              "duration": 164,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "b788f4c2-ff61-41b8-b323-3f8864989f0a",
+              "parentUUID": "18d0e7c9-6583-49a3-a35f-a8f60746825e",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should open dashboard after manual login",
+              "fullTitle": "Dashboard Page Tests should open dashboard after manual login",
+              "timedOut": false,
+              "duration": 3225,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// 1. Open login page\nawait driver.get(\"http://localhost:3000/login\");\n// 2. Fill login form\nawait driver.findElement(By.css('input[type=\"email\"]'))\n  .sendKeys('aimentayyab215@gmail.com');\nawait driver.findElement(By.css('input[type=\"password\"]'))\n  .sendKeys('aimen12');\n// 3. Click login\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// 4. Wait for redirect to dashboard\nawait driver.wait(until.urlContains(\"/dashboard\"), 20000);\n// 5. Wait for dashboard main container\nawait driver.wait(until.elementLocated(By.css(\".container\")), 20000);\n// 6. Verify Add Task input exists\nawait driver.wait(\n  until.elementLocated(By.css(\"input[placeholder='Enter new task...']\")),\n  20000\n);",
+              "err": {},
+              "uuid": "89a6ab7a-8fac-48c6-bf7b-337d9836fb32",
+              "parentUUID": "18d0e7c9-6583-49a3-a35f-a8f60746825e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "89a6ab7a-8fac-48c6-bf7b-337d9836fb32"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 3225,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 50000
+        },
+        {
+          "uuid": "c13a9088-e6b6-4851-9258-5c3ae0df65bb",
+          "title": "In Progress Section Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\inProgressSection.test.js",
+          "file": "\\tests\\inProgressSection.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"In Progress Section Test\"",
+              "fullTitle": "In Progress Section Test \"before all\" hook in \"In Progress Section Test\"",
+              "timedOut": false,
+              "duration": 1406,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "let options = new chrome.Options();\noptions.addArguments(\"--headless\"); // Headless for EC2/Jenkins\noptions.addArguments(\"--no-sandbox\");\noptions.addArguments(\"--disable-dev-shm-usage\");\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "4d92add6-3315-4276-95c9-aa01d4477e97",
+              "parentUUID": "c13a9088-e6b6-4851-9258-5c3ae0df65bb",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"In Progress Section Test\"",
+              "fullTitle": "In Progress Section Test \"after all\" hook in \"In Progress Section Test\"",
+              "timedOut": false,
+              "duration": 212,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "965f0fef-5c2b-4054-84a4-1df39fb6e7de",
+              "parentUUID": "c13a9088-e6b6-4851-9258-5c3ae0df65bb",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should add a task with due date, verify it in In Progress section, and logout",
+              "fullTitle": "In Progress Section Test should add a task with due date, verify it in In Progress section, and logout",
+              "timedOut": false,
+              "duration": 17585,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// 1️⃣ Login\nawait driver.get(\"http://localhost:3000/login\");\nawait driver.findElement(By.css('input[type=\"email\"]')).sendKeys(email);\nawait driver.findElement(By.css('input[type=\"password\"]')).sendKeys(password);\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// 2️⃣ Wait for dashboard\nawait driver.wait(until.urlContains(\"/dashboard\"), 15000);\n// 3️⃣ Add a new task in All section with due date\nawait driver.wait(until.elementLocated(By.css(\".add-task\")), 15000);\nawait driver.findElement(By.css('.add-task input[type=\"text\"]')).sendKeys(newTaskName);\nawait driver.findElement(By.css(\".add-task select\")).sendKeys(\"Work\");\nawait driver.findElement(By.css('.add-task input[type=\"date\"]')).sendKeys(dueDateInput);\nawait driver.findElement(By.css(\".add-task button.add-btn\")).click();\n// 4️⃣ Wait for task to appear in All view\nconst addedTaskAll = await driver.wait(\n  until.elementLocated(By.xpath(`//div[contains(@class,'task-card')]//div[contains(text(),'${newTaskName}')]`)),\n  15000\n);\nassert.ok(await addedTaskAll.isDisplayed(), \"Task not added in All view\");\n// 5️⃣ Move task to In Progress by clicking the button inside task card\nconst taskCard = await driver.findElement(\n  By.xpath(`//div[contains(@class,'task-card')]//div[contains(text(),'${newTaskName}')]/ancestor::div[contains(@class,'task-card')]`)\n);\nconst inProgressBtn = await taskCard.findElement(By.xpath(\".//button[contains(text(),'In Progress')]\"));\nawait inProgressBtn.click();\nawait driver.sleep(500); // wait for state update\n// 6️⃣ Click \"In Progress\" button in sidebar to filter\nconst inProgressSidebarBtn = await driver.findElement(By.xpath(\"//button[contains(text(),'In Progress')]\"));\nawait inProgressSidebarBtn.click();\nawait driver.sleep(1000); // wait for React to render\n// 7️⃣ Locate the task card in In Progress section\nconst taskCardInProgress = await driver.findElement(\n  By.xpath(`//div[contains(@class,'task-card')]//div[contains(text(),'${newTaskName}')]/ancestor::div[contains(@class,'task-card')]`)\n);\n// 8️⃣ Verify task title exists\nconst taskTitle = await taskCardInProgress.findElement(By.xpath(`.//div[contains(text(),'${newTaskName}')]`));\nassert.ok(await taskTitle.isDisplayed(), \"Task not visible in In Progress view\");\n// 9️⃣ Verify there is a Due date element\nconst dueDateElement = await taskCardInProgress.findElement(By.xpath(`.//span[contains(text(),'Due:')]`));\nassert.ok(await dueDateElement.isDisplayed(), \"Task due date not displayed\");\n// 🔟 Logout\nconst logoutBtn = await driver.findElement(By.xpath(\"//button[contains(text(),'Logout')]\"));\nawait logoutBtn.click();\nawait driver.wait(until.urlContains(\"/login\"), 10000);",
+              "err": {},
+              "uuid": "2f99b047-389f-4103-8918-70de545a3664",
+              "parentUUID": "c13a9088-e6b6-4851-9258-5c3ae0df65bb",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "2f99b047-389f-4103-8918-70de545a3664"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 17585,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "e21b6ff9-c918-45d2-89e5-c828ecff186b",
+          "title": "Login Page Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\login.test.js",
+          "file": "\\tests\\login.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Login Page Test\"",
+              "fullTitle": "Login Page Test \"before all\" hook in \"Login Page Test\"",
+              "timedOut": false,
+              "duration": 1624,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "let options = new chrome.Options();\noptions.addArguments(\"--headless\"); // Run in headless mode\noptions.addArguments(\"--no-sandbox\"); // Needed for Linux/EC2\noptions.addArguments(\"--disable-dev-shm-usage\"); // Prevent resource issues\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser('chrome')\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "8f122d0e-1fad-40b7-8add-81b80cde9148",
+              "parentUUID": "e21b6ff9-c918-45d2-89e5-c828ecff186b",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Login Page Test\"",
+              "fullTitle": "Login Page Test \"after all\" hook in \"Login Page Test\"",
+              "timedOut": false,
+              "duration": 272,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "75aefc2b-f2a0-4f9d-8add-1a29a6764852",
+              "parentUUID": "e21b6ff9-c918-45d2-89e5-c828ecff186b",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should login successfully with valid credentials",
+              "fullTitle": "Login Page Test should login successfully with valid credentials",
+              "timedOut": false,
+              "duration": 3835,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get('http://localhost:3000/login');\nawait driver.findElement(By.css('input[type=\"email\"]'))\n  .sendKeys('aimentayyab215@gmail.com');\nawait driver.findElement(By.css('input[type=\"password\"]'))\n  .sendKeys('aimen12');\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// Wait for redirect to dashboard\nawait driver.wait(until.urlContains('/dashboard'), 15000);\n// Wait for dashboard content to load\nconst container = await driver.wait(\n  until.elementLocated(By.css('.container')),\n  10000\n);\nassert.ok(await container.isDisplayed(), \"Dashboard container not displayed\");",
+              "err": {},
+              "uuid": "9a621039-69cb-411f-bc4c-7242e6c3ae12",
+              "parentUUID": "e21b6ff9-c918-45d2-89e5-c828ecff186b",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "should show error for invalid credentials",
+              "fullTitle": "Login Page Test should show error for invalid credentials",
+              "timedOut": false,
+              "duration": 1332,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get('http://localhost:3000/login');\nawait driver.findElement(By.css('input[type=\"email\"]')).sendKeys('wrong@email.com');\nawait driver.findElement(By.css('input[type=\"password\"]')).sendKeys('wrongpass');\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// Wait for error message\nconst errorMsg = await driver.wait(\n  until.elementLocated(By.css('.error-msg')),\n  10000\n);\nassert.ok(await errorMsg.isDisplayed(), \"Error message not displayed for invalid login\");",
+              "err": {},
+              "uuid": "5041856c-5b37-414f-9fbf-41db133537b1",
+              "parentUUID": "e21b6ff9-c918-45d2-89e5-c828ecff186b",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "9a621039-69cb-411f-bc4c-7242e6c3ae12",
+            "5041856c-5b37-414f-9fbf-41db133537b1"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 5167,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 50000
+        },
+        {
+          "uuid": "6be6315d-7d44-4ef3-96ec-88b1698596d6",
+          "title": "Profile Edit Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\profileEdit.test.js",
+          "file": "\\tests\\profileEdit.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Profile Edit Test\"",
+              "fullTitle": "Profile Edit Test \"before all\" hook in \"Profile Edit Test\"",
+              "timedOut": false,
+              "duration": 1539,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "let options = new chrome.Options();\noptions.addArguments(\"--headless\"); // headless mode\noptions.addArguments(\"--no-sandbox\"); // needed for Linux/EC2\noptions.addArguments(\"--disable-dev-shm-usage\"); // prevent resource issues\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "dcdb4231-42df-456b-85bc-b0510f27bf10",
+              "parentUUID": "6be6315d-7d44-4ef3-96ec-88b1698596d6",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Profile Edit Test\"",
+              "fullTitle": "Profile Edit Test \"after all\" hook in \"Profile Edit Test\"",
+              "timedOut": false,
+              "duration": 159,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "376eb125-f09f-47e5-8ff4-3415b6d42933",
+              "parentUUID": "6be6315d-7d44-4ef3-96ec-88b1698596d6",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should edit profile information and save changes",
+              "fullTitle": "Profile Edit Test should edit profile information and save changes",
+              "timedOut": false,
+              "duration": 5744,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// 1️⃣ Login\nawait driver.get(\"http://localhost:3000/login\");\nawait driver.findElement(By.css('input[type=\"email\"]')).sendKeys(email);\nawait driver.findElement(By.css('input[type=\"password\"]')).sendKeys(password);\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// 2️⃣ Wait for Dashboard to load\nawait driver.wait(until.elementLocated(By.css(\".container\")), 15000);\n// 3️⃣ Click Profile in sidebar\nconst profileBtn = await driver.findElement(By.xpath(\"//button[contains(.,'Profile')]\"));\nawait profileBtn.click();\n// 4️⃣ Wait for Edit button\nconst editBtn = await driver.wait(until.elementLocated(By.css(\".edit-btn\")), 10000);\nawait editBtn.click();\n// 5️⃣ Change username\nconst usernameInput = await driver.wait(until.elementLocated(By.css('input[type=\"text\"]')), 5000);\nawait usernameInput.clear();\nawait usernameInput.sendKeys(\"Tayyab\"); // adjust username as needed\n// 6️⃣ Click Save Changes\nconst saveBtn = await driver.findElement(By.css(\".edit-btn\")); // same button toggles to save\nawait saveBtn.click();\n// 7️⃣ Verify username changed in DOM\nconst usernameText = await driver.wait(\n  until.elementLocated(By.xpath(\"//h2[contains(.,'Tayyab')]\")),\n  5000\n);\nassert.ok(await usernameText.isDisplayed(), \"Username not updated!\");\n// 8️⃣ Logout\nconst logoutBtn = await driver.findElement(By.css(\".logout-btn\"));\nawait logoutBtn.click();\n// 9️⃣ Verify redirect to login\nawait driver.wait(until.urlContains(\"/login\"), 10000);",
+              "err": {},
+              "uuid": "59978993-ab07-40a5-a999-e356f2925d1b",
+              "parentUUID": "6be6315d-7d44-4ef3-96ec-88b1698596d6",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "59978993-ab07-40a5-a999-e356f2925d1b"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 5744,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "addaf7c3-84cc-480c-9ba9-bea40765c6c9",
+          "title": "Signup Page Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\signup.test.js",
+          "file": "\\tests\\signup.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Signup Page Test\"",
+              "fullTitle": "Signup Page Test \"before all\" hook in \"Signup Page Test\"",
+              "timedOut": false,
+              "duration": 1558,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--headless\"); // headless mode\noptions.addArguments(\"--no-sandbox\"); // needed for Linux/EC2\noptions.addArguments(\"--disable-dev-shm-usage\"); // prevent resource issues\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "6da7d64f-293e-4591-a3c0-bd7c9d2ea4de",
+              "parentUUID": "addaf7c3-84cc-480c-9ba9-bea40765c6c9",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Signup Page Test\"",
+              "fullTitle": "Signup Page Test \"after all\" hook in \"Signup Page Test\"",
+              "timedOut": false,
+              "duration": 107,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "40fdcce2-597d-45d2-8a41-07e1fe096998",
+              "parentUUID": "addaf7c3-84cc-480c-9ba9-bea40765c6c9",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should show success OR error after signup attempt",
+              "fullTitle": "Signup Page Test should show success OR error after signup attempt",
+              "timedOut": false,
+              "duration": 5347,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await driver.get(\"http://localhost:3000/signup\");\n// Wait for the signup form to load\nawait driver.wait(until.elementLocated(By.css(\"input[placeholder='Username']\")), 10000);\nconst randomEmail = `selenium_${Date.now()}@test.com`;\n// Fill signup form\nawait driver.findElement(By.css(\"input[placeholder='Username']\")).sendKeys(\"seleniumUser\");\nawait driver.findElement(By.css(\"input[placeholder='Email address']\")).sendKeys(randomEmail);\nawait driver.findElement(By.css(\"input[placeholder='Password']\")).sendKeys(\"pass123\");\n// Click signup button\nawait driver.findElement(By.css(\"button.auth-btn\")).click();\n// Wait a few seconds for either redirect or error message\nawait driver.sleep(2000);\nconst currentUrl = await driver.getCurrentUrl();\nif (currentUrl.includes(\"/login\") || currentUrl.includes(\"/dashboard\")) {\n  // Success case\n  console.log(\"✅ Signup successful, redirected to:\", currentUrl);\n  expect(currentUrl).to.match(/\\/(login|dashboard)/);\n} else {\n  // Try to find error message\n  let errorText = \"\";\n  try {\n    const errorElement = await driver.findElement(By.css(\".error-msg\"));\n    errorText = await errorElement.getText();\n  } catch (err) {\n    // No error element found\n    errorText = \"No error element found, and no redirect happened!\";\n  }\n  console.log(\"⚠ Signup failed or error shown:\", errorText);\n  expect(errorText.length).to.be.greaterThan(0);\n}",
+              "err": {},
+              "uuid": "3a0207e8-0b77-44cf-ac08-f99fc72fd42d",
+              "parentUUID": "addaf7c3-84cc-480c-9ba9-bea40765c6c9",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "3a0207e8-0b77-44cf-ac08-f99fc72fd42d"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 5347,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 40000
+        },
+        {
+          "uuid": "c049d9e4-5438-40ff-b686-d11254bf019b",
+          "title": "Taskify App – Signup → Login → Dashboard Flow",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\signupLoginDashboard.test.js",
+          "file": "\\tests\\signupLoginDashboard.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Taskify App – Signup → Login → Dashboard Flow\"",
+              "fullTitle": "Taskify App – Signup → Login → Dashboard Flow \"before all\" hook in \"Taskify App – Signup → Login → Dashboard Flow\"",
+              "timedOut": false,
+              "duration": 1533,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--headless\"); // headless mode\noptions.addArguments(\"--no-sandbox\"); // needed for Linux/EC2\noptions.addArguments(\"--disable-dev-shm-usage\"); // prevent resource issues\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "3064354a-f98a-48f3-9e74-fe46fcb2d887",
+              "parentUUID": "c049d9e4-5438-40ff-b686-d11254bf019b",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Taskify App – Signup → Login → Dashboard Flow\"",
+              "fullTitle": "Taskify App – Signup → Login → Dashboard Flow \"after all\" hook in \"Taskify App – Signup → Login → Dashboard Flow\"",
+              "timedOut": false,
+              "duration": 249,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "8654a963-fcd0-410e-9e5d-012b12f192d3",
+              "parentUUID": "c049d9e4-5438-40ff-b686-d11254bf019b",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should signup → go to login → login and reach dashboard",
+              "fullTitle": "Taskify App – Signup → Login → Dashboard Flow should signup → go to login → login and reach dashboard",
+              "timedOut": false,
+              "duration": 4602,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const BASE_URL = \"http://localhost:3000\";\n// --- GO TO SIGNUP PAGE ---\nawait driver.get(BASE_URL + \"/signup\");\nawait driver.wait(until.elementLocated(By.css(\"input[placeholder='Username']\")), 10000);\n// Generate random user\nconst randomEmail = `user${Date.now()}@test.com`;\nconst password = \"123456\";\n// --- FILL SIGNUP FORM ---\nawait driver.findElement(By.css(\"input[placeholder='Username']\")).sendKeys(\"SeleniumUser\");\nawait driver.findElement(By.css(\"input[placeholder='Email address']\")).sendKeys(randomEmail);\nawait driver.findElement(By.css(\"input[placeholder='Password']\")).sendKeys(password);\n// Click Signup\nawait driver.findElement(By.css(\"button.auth-btn\")).click();\n// --- WAIT FOR REDIRECT OR ERROR ---\nlet signupRedirected = false;\ntry {\n  await driver.wait(async () => {\n    const url = await driver.getCurrentUrl();\n    if (url.includes(\"/login\")) {\n      signupRedirected = true;\n      return true;\n    }\n    try {\n      const error = await driver.findElement(By.css(\".error-msg\"));\n      return true; // Error appeared\n    } catch {\n      return false;\n    }\n  }, 10000);\n} catch {\n  // timeout\n}\nif (!signupRedirected) {\n  // If signup failed, check error message\n  let errorText = \"No error element found!\";\n  try {\n    errorText = await driver.findElement(By.css(\".error-msg\")).getText();\n  } catch {}\n  console.log(\"⚠ Signup error message:\", errorText);\n  expect(errorText.length).to.be.greaterThan(0);\n  return; // stop test if signup failed\n}\nconsole.log(\"✅ Signup success, redirected to login\");\n// --- LOGIN ---\nawait driver.findElement(By.css(\"input[placeholder='Email address']\")).sendKeys(randomEmail);\nawait driver.findElement(By.css(\"input[placeholder='Password']\")).sendKeys(password);\nawait driver.findElement(By.css(\"button.auth-btn\")).click();\n// --- WAIT FOR DASHBOARD ---\nawait driver.wait(until.urlContains(\"/dashboard\"), 15000);\nconst url = await driver.getCurrentUrl();\nexpect(url).to.include(\"/dashboard\");\nconsole.log(\"✅ Login success, reached dashboard\");",
+              "err": {},
+              "uuid": "73039d47-1439-4cd2-8fa9-13d5e6a80c28",
+              "parentUUID": "c049d9e4-5438-40ff-b686-d11254bf019b",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "73039d47-1439-4cd2-8fa9-13d5e6a80c28"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 4602,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "3c46f262-e168-4a71-bff9-9bf85b162b1e",
+          "title": "Simple To Do Section Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\todoSection.test.js",
+          "file": "\\tests\\todoSection.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Simple To Do Section Test\"",
+              "fullTitle": "Simple To Do Section Test \"before all\" hook in \"Simple To Do Section Test\"",
+              "timedOut": false,
+              "duration": 1888,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--headless\"); // run in headless mode\noptions.addArguments(\"--no-sandbox\"); // needed for Linux/EC2\noptions.addArguments(\"--disable-dev-shm-usage\"); // prevent resource issues\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "6420b16c-f931-4c79-b5cd-b5e8fcae9e6e",
+              "parentUUID": "3c46f262-e168-4a71-bff9-9bf85b162b1e",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Simple To Do Section Test\"",
+              "fullTitle": "Simple To Do Section Test \"after all\" hook in \"Simple To Do Section Test\"",
+              "timedOut": false,
+              "duration": 272,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "8132557f-dc9d-4c15-8519-28d3d961339e",
+              "parentUUID": "3c46f262-e168-4a71-bff9-9bf85b162b1e",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should add a task with due date, verify it in To Do section, and logout",
+              "fullTitle": "Simple To Do Section Test should add a task with due date, verify it in To Do section, and logout",
+              "timedOut": false,
+              "duration": 9887,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// 1️⃣ Login\nawait driver.get(\"http://localhost:3000/login\");\nawait driver.findElement(By.css('input[type=\"email\"]')).sendKeys(email);\nawait driver.findElement(By.css('input[type=\"password\"]')).sendKeys(password);\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// 2️⃣ Wait for dashboard\nawait driver.wait(until.urlContains(\"/dashboard\"), 15000);\n// 3️⃣ Add a new task in All section with due date\nawait driver.wait(until.elementLocated(By.css(\".add-task\")), 15000);\nawait driver.findElement(By.css('.add-task input[type=\"text\"]')).sendKeys(newTaskName);\nawait driver.findElement(By.css(\".add-task select\")).sendKeys(\"Work\");\nawait driver.findElement(By.css('.add-task input[type=\"date\"]')).sendKeys(dueDateInput);\nawait driver.findElement(By.css(\".add-task button.add-btn\")).click();\n// 4️⃣ Wait for task to appear in All view\nconst addedTaskAll = await driver.wait(\n  until.elementLocated(By.xpath(`//div[contains(@class,'task-card')]//div[contains(text(),'${newTaskName}')]`)),\n  15000\n);\nassert.ok(await addedTaskAll.isDisplayed(), \"Task not added in All view\");\n// 5️⃣ Click \"To Do\" button in sidebar\nconst todoBtn = await driver.findElement(By.xpath(\"//button[contains(text(),'To Do')]\"));\nawait todoBtn.click();\nawait driver.sleep(1000); // wait for React to render To Do view\n// 6️⃣ Locate the task card in To Do section\nconst taskCardTodo = await driver.findElement(\n  By.xpath(`//div[contains(@class,'task-card')]//div[contains(text(),'${newTaskName}')]/ancestor::div[contains(@class,'task-card')]`)\n);\n// 7️⃣ Verify task title exists\nconst taskTitle = await taskCardTodo.findElement(By.xpath(`.//div[contains(text(),'${newTaskName}')]`));\nassert.ok(await taskTitle.isDisplayed(), \"Task not visible in To Do view\");\n// 8️⃣ Verify there is a Due date element (without checking exact string)\nconst dueDateElement = await taskCardTodo.findElement(By.xpath(`.//span[contains(text(),'Due:')]`));\nassert.ok(await dueDateElement.isDisplayed(), \"Task due date not displayed\");\n// 9️⃣ Logout\nconst logoutBtn = await driver.findElement(By.xpath(\"//button[contains(text(),'Logout')]\"));\nawait logoutBtn.click();\n// 🔟 Verify redirect to login\nawait driver.wait(until.urlContains(\"/login\"), 10000);",
+              "err": {},
+              "uuid": "173f39e9-c92e-4480-9f79-726d00dbcf27",
+              "parentUUID": "3c46f262-e168-4a71-bff9-9bf85b162b1e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "173f39e9-c92e-4480-9f79-726d00dbcf27"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 9887,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "e2e2cd54-c6dc-4d89-9f1b-375be735c295",
+          "title": "Update Task Test",
+          "fullFile": "C:\\Users\\E L I T E B O O K\\selenium-tests\\tests\\updateTask.test.js",
+          "file": "\\tests\\updateTask.test.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Update Task Test\"",
+              "fullTitle": "Update Task Test \"before all\" hook in \"Update Task Test\"",
+              "timedOut": false,
+              "duration": 1610,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const options = new chrome.Options();\noptions.addArguments(\"--headless\");\noptions.addArguments(\"--no-sandbox\");\noptions.addArguments(\"--disable-dev-shm-usage\");\noptions.addArguments(\"--window-size=1920,1080\");\ndriver = await new Builder()\n  .forBrowser(\"chrome\")\n  .setChromeOptions(options)\n  .build();",
+              "err": {},
+              "uuid": "25000251-e79c-48fb-a38d-09a28626a5b6",
+              "parentUUID": "e2e2cd54-c6dc-4d89-9f1b-375be735c295",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [
+            {
+              "title": "\"after all\" hook in \"Update Task Test\"",
+              "fullTitle": "Update Task Test \"after all\" hook in \"Update Task Test\"",
+              "timedOut": false,
+              "duration": 329,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "if (driver) await driver.quit();",
+              "err": {},
+              "uuid": "b875ae66-de13-4da1-96b5-2f010bc0408a",
+              "parentUUID": "e2e2cd54-c6dc-4d89-9f1b-375be735c295",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "tests": [
+            {
+              "title": "should add a task, move it to In Progress, complete it, and verify status",
+              "fullTitle": "Update Task Test should add a task, move it to In Progress, complete it, and verify status",
+              "timedOut": false,
+              "duration": 9511,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// 1️⃣ Login\nawait driver.get(\"http://localhost:3000/login\");\nawait driver.findElement(By.css('input[type=\"email\"]')).sendKeys(email);\nawait driver.findElement(By.css('input[type=\"password\"]')).sendKeys(password);\nawait driver.findElement(By.css('button[type=\"submit\"]')).click();\n// 2️⃣ Wait for dashboard\nawait driver.wait(until.urlContains(\"/dashboard\"), 15000);\n// 3️⃣ Add new task\nawait driver.wait(until.elementLocated(By.css('input[placeholder=\"Enter new task...\"]')), 10000);\nawait driver.findElement(By.css('input[placeholder=\"Enter new task...\"]')).sendKeys(taskTitle);\nawait driver.findElement(By.css('select')).sendKeys(category);\nawait driver.findElement(By.css('input[type=\"date\"]')).sendKeys(dueDate);\nawait driver.findElement(By.css('.add-btn')).click();\n// 4️⃣ Wait for the specific task card\nconst taskCardXpath = `//div[contains(@class,'task-card')]//div[contains(text(), '${taskTitle}')]/ancestor::div[contains(@class,'task-card')]`;\nawait driver.wait(until.elementLocated(By.xpath(taskCardXpath)), 20000);\n// 5️⃣ Click \"In Progress\"\nconst inProgressBtn = await driver.wait(\n  until.elementLocated(By.xpath(`${taskCardXpath}//button[contains(text(),'In Progress')]`)),\n  10000\n);\nawait inProgressBtn.click();\n// 6️⃣ Click \"Done\"\nconst doneBtn = await driver.wait(\n  until.elementLocated(By.xpath(`${taskCardXpath}//button[contains(text(),'Done')]`)),\n  10000\n);\nawait doneBtn.click();\n// 7️⃣ **Wait until Done button is disabled**\nconst doneBtnAfter = await driver.wait(\n  until.elementIsDisabled(doneBtn),\n  10000\n);\n// 8️⃣ Assertion\nconst isDisabled = await doneBtnAfter.getAttribute(\"disabled\");\nassert.strictEqual(isDisabled, \"true\", \"Done button should be disabled after completion\");",
+              "err": {},
+              "uuid": "f770a1bb-16ef-404c-8296-d855b5a2401b",
+              "parentUUID": "e2e2cd54-c6dc-4d89-9f1b-375be735c295",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "f770a1bb-16ef-404c-8296-d855b5a2401b"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 9511,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 90000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "11.7.5"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.3.2"
+    }
+  }
+}
