@@ -1,9 +1,7 @@
 // frontend/src/api.js
 import axios from 'axios';
 
-// Replace YOUR_EC2_PUBLIC_IP with your EC2 public IP
-const API = axios.create({
-  baseURL: 'http://13.53.187.249:5000/api'
-});
+// Use environment variable or fallback to the new EC2 public IP
+const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://13.60.172.200:5001/api";
 
-export default API;
+export default BASE_URL;

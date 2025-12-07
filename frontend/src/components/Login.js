@@ -1,3 +1,4 @@
+// src/pages/Login.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -19,8 +20,16 @@ export default function Login() {
       localStorage.setItem('email', email);
       navigate('/dashboard');
     } catch (err) {
-      console.error('Login error:', err.response?.data || err);
-      setError(err.response?.data?.message || 'Login failed');
+      console.error('Login error full:', err);
+      if (err.response) {
+        console.error('Response data:', err.response.data);
+        console.error('Status:', err.response.status);
+      } else if (err.request) {
+        console.error('No response received:', err.request);
+      } else {
+        console.error('Error setting up request:', err.message);
+      }
+      setError('Login failed. Check console.');
     }
   };
 

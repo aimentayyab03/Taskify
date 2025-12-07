@@ -9,27 +9,34 @@ const app = express();
 // ------------------- CORS -------------------
 // Whitelist of allowed origins
 const allowedOrigins = [
-  'http://localhost:3000',  // React dev server
-  'http://localhost:8080',  // React container frontend
-  'http://localhost:5000',  // Backend direct
-  'http://13.60.249.192',   // EC2 frontend
-  'http://13.60.249.192:5000' ,// EC2 backend
-  'http://16.16.170.241',   // EC2 frontend
-  'http://16.16.170.241:5000'
+   'http://localhost:3000',   // React dev
+  'http://localhost:8080',   // React container frontend
+  'http://16.16.170.241',    // EC2 frontend
+  'http://16.16.170.241:5000',// EC2 backend (optional)
+  'http://16.16.170.241:8082'  
 ];
 
 // Enable CORS
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin) return callback(null, true); // allow Postman or server-to-server requests
+//     if (!allowedOrigins.includes(origin)) {
+//       return callback(new Error('CORS policy does not allow this origin: ' + origin), false);
+//     }
+//     return callback(null, true);
+//   },
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   credentials: true
+// }));
+
+// server.js
+
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman or server-to-server requests
-    if (!allowedOrigins.includes(origin)) {
-      return callback(new Error('CORS policy does not allow this origin: ' + origin), false);
-    }
-    return callback(null, true);
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: '*',       // <-- allow all origins temporarily
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   credentials: true
 }));
+
 
 // ------------------- Middleware -------------------
 app.use(express.json()); // Parse JSON requests

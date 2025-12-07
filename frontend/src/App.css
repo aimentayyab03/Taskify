@@ -450,3 +450,16 @@ h1, h2, h3, h4, h5 {
   .container { margin-left: 0; padding: 20px; }
   .auth-card, .profile-card { width: 90%; }
 }
+
+
+/* =========================
+   TASK ERROR MESSAGE
+========================= */
+.task-error {
+  background: #ffe6e6;
+  color: #c23616;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}

@@ -14,21 +14,47 @@ router.get('/', auth, async (req, res) => {
 });
 
 // ADD new task
+// router.post('/', auth, async (req, res) => {
+//   try {
+//     const { title, category, dueDate } = req.body;
+//     const newTask = new Task({
+//       user: req.user.id,
+//       title,
+//       category: category || 'Other',
+//       dueDate: dueDate || null
+//     });
+//     const savedTask = await newTask.save();
+//     res.json(savedTask);
+//   } catch (err) {
+//     res.status(500).send('Server Error');
+//   }
+// });
+
+// ADD new task with validation
 router.post('/', auth, async (req, res) => {
   try {
     const { title, category, dueDate } = req.body;
+
+    // Backend validation
+    if (!title || !category || !dueDate) {
+      return res.status(400).json({ msg: "Please fill all fields" });
+    }
+
     const newTask = new Task({
       user: req.user.id,
       title,
-      category: category || 'Other',
-      dueDate: dueDate || null
+      category,
+      dueDate
     });
+
     const savedTask = await newTask.save();
     res.json(savedTask);
   } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
+
 
 // UPDATE task status
 router.put('/:id', auth, async (req, res) => {
