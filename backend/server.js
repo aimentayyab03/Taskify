@@ -13,7 +13,9 @@ const allowedOrigins = [
   'http://localhost:8080',   // React container frontend
   'http://16.16.170.241',    // EC2 frontend
   'http://16.16.170.241:5000',// EC2 backend (optional)
-  'http://16.16.170.241:8082'  
+  'http://16.16.170.241:8082',
+  'http://13.60.172.200:3000', 
+  'http://13.60.172.200:5000'  
 ];
 
 // Enable CORS
