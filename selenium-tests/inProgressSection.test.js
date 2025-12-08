@@ -4,13 +4,14 @@ require("chromedriver");
 const assert = require("assert");
 
 describe("In Progress Section Test", function () {
-  this.timeout(60000); // Slightly increased for stability
+  this.timeout(90000); // Increased timeout for EC2/headless
 
   let driver;
   const email = "aimentayyab215@gmail.com";
   const password = "aimen12";
   const newTaskName = "Automated In Progress Task " + Date.now();
   const dueDateInput = "12-06-2025"; // MM-DD-YYYY format
+  const BASE_URL = "http://13.51.199.30"; // EC2 Docker frontend
 
   before(async function () {
     let options = new chrome.Options();
@@ -31,7 +32,7 @@ describe("In Progress Section Test", function () {
 
   it("should add a task with due date, verify it in In Progress section, and logout", async function () {
     // 1️⃣ Login
-    await driver.get("http://localhost:3000/login");
+    await driver.get(BASE_URL + "/login");
     await driver.findElement(By.css('input[type="email"]')).sendKeys(email);
     await driver.findElement(By.css('input[type="password"]')).sendKeys(password);
     await driver.findElement(By.css('button[type="submit"]')).click();
@@ -53,7 +54,7 @@ describe("In Progress Section Test", function () {
     );
     assert.ok(await addedTaskAll.isDisplayed(), "Task not added in All view");
 
-    // 5️⃣ Move task to In Progress by clicking the button inside task card
+    // 5️⃣ Move task to In Progress
     const taskCard = await driver.findElement(
       By.xpath(`//div[contains(@class,'task-card')]//div[contains(text(),'${newTaskName}')]/ancestor::div[contains(@class,'task-card')]`)
     );

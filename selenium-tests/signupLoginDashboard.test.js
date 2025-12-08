@@ -26,7 +26,7 @@ describe("Taskify App – Signup → Login → Dashboard Flow", function () {
   });
 
   it("should signup → go to login → login and reach dashboard", async () => {
-    const BASE_URL = "http://localhost:3000";
+    const BASE_URL = "http://13.51.199.30";
 
     // --- GO TO SIGNUP PAGE ---
     await driver.get(BASE_URL + "/signup");
@@ -54,7 +54,7 @@ describe("Taskify App – Signup → Login → Dashboard Flow", function () {
           return true;
         }
         try {
-          const error = await driver.findElement(By.css(".error-msg"));
+          await driver.findElement(By.css(".error-msg"));
           return true; // Error appeared
         } catch {
           return false;

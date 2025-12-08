@@ -11,12 +11,11 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "chai": "^6.2.1",
     "chromedriver": "^143.0.0",
     "mocha": "^11.7.5",
     "mochawesome": "^7.1.4",
     "puppeteer": "^24.32.0",
-    "selenium-webdriver": "^4.38.0"
+    "selenium-webdriver": "^4.39.0"
   },
   "directories": {
     "test": "tests"
@@ -44,6 +43,7 @@
     "call-bind-apply-helpers": "^1.0.2",
     "callsites": "^3.1.0",
     "camelcase": "^6.3.0",
+    "chai": "^4.5.0",
     "chalk": "^4.1.2",
     "chokidar": "^4.0.3",
     "chromium-bidi": "^11.0.0",

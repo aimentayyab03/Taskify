@@ -4,7 +4,7 @@ require("chromedriver");
 
 describe("Dashboard Page Tests", function () {
   let driver;
-  this.timeout(50000);
+  this.timeout(60000); // Increased timeout for EC2 headless
 
   before(async () => {
     // Headless Chrome options
@@ -24,29 +24,38 @@ describe("Dashboard Page Tests", function () {
     if (driver) await driver.quit();
   });
 
-  it("should open dashboard after manual login", async () => {
-    // 1. Open login page
-    await driver.get("http://localhost:3000/login");
+  it("should open dashboard after login", async () => {
+    const BASE_URL = "http://13.51.199.30" // Use EC2 Docker frontend
 
-    // 2. Fill login form
+    // 1️⃣ Open login page
+    await driver.get(BASE_URL + "/login");
+
+    // 2️⃣ Fill login form
     await driver.findElement(By.css('input[type="email"]'))
       .sendKeys('aimentayyab215@gmail.com');
     await driver.findElement(By.css('input[type="password"]'))
       .sendKeys('aimen12');
 
-    // 3. Click login
+    // 3️⃣ Click login
     await driver.findElement(By.css('button[type="submit"]')).click();
 
-    // 4. Wait for redirect to dashboard
+    // 4️⃣ Wait for redirect to dashboard
     await driver.wait(until.urlContains("/dashboard"), 20000);
 
-    // 5. Wait for dashboard main container
-    await driver.wait(until.elementLocated(By.css(".container")), 20000);
+    // 5️⃣ Wait for dashboard container to be visible
+    const container = await driver.wait(
+      until.elementLocated(By.css(".container")),
+      20000
+    );
 
-    // 6. Verify Add Task input exists
-    await driver.wait(
+    // 6️⃣ Verify Add Task input exists
+    const addTaskInput = await driver.wait(
       until.elementLocated(By.css("input[placeholder='Enter new task...']")),
       20000
     );
+
+    // Optional: simple assertion
+    const isDisplayed = await addTaskInput.isDisplayed();
+    if (!isDisplayed) throw new Error("Add Task input not visible on dashboard");
   });
 });

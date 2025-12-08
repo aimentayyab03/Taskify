@@ -4,12 +4,13 @@ require("chromedriver");
 const assert = require('assert');
 
 describe('Login Page Test', function () {
-  let driver;
   this.timeout(50000); // Increased timeout for CI/CD
+  let driver;
+  const BASE_URL = "http://13.51.199.30"; // Change to EC2 URL if running in Docker
 
   before(async () => {
-    let options = new chrome.Options();
-    options.addArguments("--headless"); // Run in headless mode
+    const options = new chrome.Options();
+    options.addArguments("--headless"); // Headless mode
     options.addArguments("--no-sandbox"); // Needed for Linux/EC2
     options.addArguments("--disable-dev-shm-usage"); // Prevent resource issues
     options.addArguments("--window-size=1920,1080");
@@ -25,7 +26,7 @@ describe('Login Page Test', function () {
   });
 
   it('should login successfully with valid credentials', async () => {
-    await driver.get('http://localhost:3000/login');
+    await driver.get(BASE_URL + '/login');
 
     await driver.findElement(By.css('input[type="email"]'))
       .sendKeys('aimentayyab215@gmail.com');
@@ -48,10 +49,12 @@ describe('Login Page Test', function () {
   });
 
   it('should show error for invalid credentials', async () => {
-    await driver.get('http://localhost:3000/login');
+    await driver.get(BASE_URL + '/login');
 
-    await driver.findElement(By.css('input[type="email"]')).sendKeys('wrong@email.com');
-    await driver.findElement(By.css('input[type="password"]')).sendKeys('wrongpass');
+    await driver.findElement(By.css('input[type="email"]'))
+      .sendKeys('wrong@email.com');
+    await driver.findElement(By.css('input[type="password"]'))
+      .sendKeys('wrongpass');
 
     await driver.findElement(By.css('button[type="submit"]')).click();
 
@@ -63,5 +66,4 @@ describe('Login Page Test', function () {
 
     assert.ok(await errorMsg.isDisplayed(), "Error message not displayed for invalid login");
   });
-
 });
