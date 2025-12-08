@@ -14,8 +14,8 @@ const allowedOrigins = [
   'http://16.16.170.241',    // EC2 frontend
   'http://16.16.170.241:5000',// EC2 backend (optional)
   'http://16.16.170.241:8082',
-  'http://13.51.204.122:3000', 
-  'http://13.51.204.122:5000 ' 
+  'http://51.20.10.38:3000', 
+  'http://51.20.10.38:5000 ' 
 ];
 
 // Enable CORS
