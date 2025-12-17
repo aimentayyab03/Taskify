@@ -8,25 +8,33 @@ pipeline {
 
     stages {
 
+        // 1️⃣ Clone your GitHub repository
         stage('Clone GitHub Repo') {
             steps {
                 git branch: 'master', url: 'https://github.com/aimentayyab03/Taskify.git'
             }
         }
 
-        stage('Build Selenium Test Image') {
+        // 2️⃣ Build / Pull your application containers if needed (optional)
+        stage('Pull and Run App Containers') {
             steps {
                 sh '''
-                    cd selenium-tests
-                    docker build -t taskify-selenium-tests .
+                    docker pull aimen123/backend:latest || true
+                    docker pull aimen123/frontend:latest || true
+                    docker-compose -f docker-compose.yml up -d || true
                 '''
             }
         }
 
+        // 3️⃣ Run Selenium tests using prebuilt Chrome image
         stage('Run Selenium Tests') {
             steps {
                 sh '''
-                    docker run --rm --shm-size=2g taskify-selenium-tests
+                    docker run --rm \
+                      -v $PWD/selenium-tests:/usr/src/app \
+                      -w /usr/src/app \
+                      selenium/standalone-chrome:latest \
+                      npx jest
                 '''
             }
         }
@@ -34,6 +42,7 @@ pipeline {
 
     post {
         always {
+            // Show all containers for verification
             sh 'docker ps -a'
             echo 'Selenium tests executed'
         }
