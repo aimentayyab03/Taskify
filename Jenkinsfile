@@ -14,33 +14,31 @@ pipeline {
             }
         }
 
-        stage('Login to DockerHub') {
-            steps {
-                sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
-            }
-        }
-
-        stage('Stop and Remove Old Containers') {
+        stage('Build Selenium Test Image') {
             steps {
                 sh '''
-                    docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
+                    cd selenium-tests
+                    docker build -t taskify-selenium-tests .
                 '''
             }
         }
 
-        stage('Pull and Run Application Containers') {
+        stage('Run Selenium Tests') {
             steps {
                 sh '''
-                    docker pull aimen123/backend:latest
-                    docker pull aimen123/frontend:latest
-                    docker-compose -f docker-compose.yml up -d
+                    docker run --rm --shm-size=2g taskify-selenium-tests
                 '''
             }
         }
+    }
 
-        /* =======================
-           🔥 TASK-2 REQUIRED STAGE
-           =======================
+    post {
+        always {
+            sh 'docker ps -a'
+            echo 'Selenium tests executed'
+        }
+    }
+}
 
 
 
