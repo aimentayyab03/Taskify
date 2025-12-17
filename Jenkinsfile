@@ -28,16 +28,14 @@ pipeline {
 
         // 3️⃣ Run Selenium tests using prebuilt Chrome image
         stage('Run Selenium Tests') {
-            steps {
-                sh '''
-                    docker run --rm \
-                      -v $PWD/selenium-tests:/usr/src/app \
-                      -w /usr/src/app \
-                      selenium/standalone-chrome:latest \
-                      npx jest
-                '''
-            }
-        }
+    steps {
+        sh '''
+        cd selenium-tests
+        docker build -t taskify-selenium-tests .
+        docker run --rm -v $PWD:/app -w /app taskify-selenium-tests
+        '''
+    }
+}
     }
 
     post {
