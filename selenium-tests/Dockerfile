@@ -1,22 +1,20 @@
 FROM node:20
 
-# Install dependencies
+# Install dependencies and Google Chrome
 RUN apt-get update && apt-get install -y wget gnupg unzip curl ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Google Chrome
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
     && apt-get update && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver automatically matching Chrome
+# Install ChromeDriver matching Chrome (Chrome for Testing)
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+') \
-    && DRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") \
-    && wget -O /tmp/chromedriver_linux64.zip "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip" \
-    && unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin/ \
+    && DRIVER_URL=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json \
+        | jq -r ".versions[] | select(.version | startswith(\"$CHROME_VERSION\")) | .downloads.chromedriver[] | select(.platform==\"LINUX64\") | .url") \
+    && wget -O /tmp/chromedriver.zip "$DRIVER_URL" \
+    && unzip /tmp/chromedriver.zip -d /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver \
-    && rm /tmp/chromedriver_linux64.zip
+    && rm /tmp/chromedriver.zip
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +23,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy test files
+# Copy project files
 COPY . .
 
 # Run all tests
