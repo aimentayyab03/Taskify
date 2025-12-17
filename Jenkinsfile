@@ -7,6 +7,7 @@ pipeline {
     }
 
     stages {
+
         stage('Clone GitHub Repo') {
             steps {
                 git branch: 'master', url: 'https://github.com/aimentayyab03/Taskify.git'
@@ -15,53 +16,32 @@ pipeline {
 
         stage('Login to DockerHub') {
             steps {
-                script {
-                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
-                }
+                sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
             }
         }
 
         stage('Stop and Remove Old Containers') {
             steps {
-                script {
-                    sh '''
-                        docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
-                    '''
-                }
+                sh '''
+                    docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
+                '''
             }
         }
 
-        stage('Pull and Run Containers') {
+        stage('Pull and Run Application Containers') {
             steps {
-                script {
-                    sh 'docker pull aimen123/backend:latest'
-                    sh 'docker pull aimen123/frontend:latest'
-                    sh 'docker-compose -f docker-compose.yml up -d'
-                }
+                sh '''
+                    docker pull aimen123/backend:latest
+                    docker pull aimen123/frontend:latest
+                    docker-compose -f docker-compose.yml up -d
+                '''
             }
         }
 
-        stage('Run Selenium Tests') {
-            steps {
-                script {
-                    sh '''
-                        docker run --rm \
-                        -v $PWD:/usr/src/app \
-                        -w /usr/src/app \
-                        markhobson/maven-chrome \
-                        mvn clean test
-                    '''
-                }
-            }
-        }
-    }
+        /* =======================
+           🔥 TASK-2 REQUIRED STAGE
+           =======================
 
-    post {
-        always {
-            sh 'docker ps -a'
-        }
-    }
-}
 
 
 
