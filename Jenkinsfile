@@ -7,42 +7,65 @@ pipeline {
     }
 
     stages {
-
-        // 1️⃣ Clone your GitHub repository
-        stage('Clone GitHub Repo') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'master', url: 'https://github.com/aimentayyab03/Taskify.git'
             }
         }
 
-        // 2️⃣ Build / Pull your application containers if needed (optional)
-        stage('Pull and Run App Containers') {
+        stage('Login to DockerHub') {
+            steps {
+                script {
+                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
+                }
+            }
+        }
+
+        stage('Pull Backend & Frontend Images') {
             steps {
                 sh '''
-                    docker pull aimen123/backend:latest || true
-                    docker pull aimen123/frontend:latest || true
-                    docker-compose -f docker-compose.yml up -d || true
+                    docker pull aimen123/backend:latest
+                    docker pull aimen123/frontend:latest
                 '''
             }
         }
 
-        // 3️⃣ Run Selenium tests using prebuilt Chrome image
+        stage('Run Backend & Frontend Containers') {
+            steps {
+                sh '''
+                    docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
+                    docker run -d --name backend-jenkins -p 5000:5000 aimen123/backend:latest
+                    docker run -d --name frontend-jenkins -p 3000:3000 aimen123/frontend:latest
+                    docker run -d --name mongo-jenkins -p 27017:27017 mongo:latest
+                '''
+            }
+        }
+
+        stage('Build Selenium Test Image') {
+            steps {
+                dir('selenium-tests') {
+                    sh 'docker build -t taskify-selenium-tests .'
+                }
+            }
+        }
+
         stage('Run Selenium Tests') {
-    steps {
-        sh '''
-        cd selenium-tests
-        docker build -t taskify-selenium-tests .
-        docker run --rm -v $PWD:/app -w /app taskify-selenium-tests
-        '''
-    }
-}
+            steps {
+                dir('selenium-tests') {
+                    sh '''
+                        docker run --rm \
+                        -v $PWD:/app \
+                        -w /app \
+                        taskify-selenium-tests
+                    '''
+                }
+            }
+        }
     }
 
     post {
         always {
-            // Show all containers for verification
             sh 'docker ps -a'
-            echo 'Selenium tests executed'
         }
     }
 }
