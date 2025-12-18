@@ -2,70 +2,63 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USERNAME = 'aimen123'
-        DOCKERHUB_PASSWORD = 'taskify12345'
+        FRONTEND_IMAGE = "aimen123/frontend-v3:latest"
+        BACKEND_IMAGE = "aimen123/backend-v2:latest"
+        SELENIUM_IMAGE = "aimen123/taskify-selenium:latest"
+        EMAIL_RECIPIENT = "aimentayyab215@gmail.com"
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Pull Latest Images') {
             steps {
-                git branch: 'master', url: 'https://github.com/aimentayyab03/Taskify.git'
+                echo "Pulling latest Docker images..."
+                sh """
+                docker pull $FRONTEND_IMAGE
+                docker pull $BACKEND_IMAGE
+                docker pull $SELENIUM_IMAGE
+                """
             }
         }
 
-        stage('Login to DockerHub') {
+        stage('Run Backend & Frontend') {
             steps {
-                script {
-                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
-                }
-            }
-        }
+                echo "Starting Backend and Frontend containers..."
+                sh """
+                # Remove old containers if they exist
+                docker rm -f backend || true
+                docker rm -f frontend || true
 
-        stage('Pull Backend & Frontend Images') {
-            steps {
-                sh '''
-                    docker pull aimen123/backend:latest
-                    docker pull aimen123/frontend:latest
-                '''
-            }
-        }
-
-        stage('Run Backend & Frontend Containers') {
-            steps {
-                sh '''
-                    docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
-                    docker run -d --name backend-jenkins -p 5000:5000 aimen123/backend:latest
-                    docker run -d --name frontend-jenkins -p 3000:3000 aimen123/frontend:latest
-                    docker run -d --name mongo-jenkins -p 27017:27017 mongo:latest
-                '''
-            }
-        }
-
-        stage('Build Selenium Test Image') {
-            steps {
-                dir('selenium-tests') {
-                    sh 'docker build -t taskify-selenium-tests .'
-                }
+                # Start containers
+                docker run -d --name backend -p 5000:5000 $BACKEND_IMAGE
+                docker run -d --name frontend -p 3000:3000 $FRONTEND_IMAGE
+                """
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                dir('selenium-tests') {
-                    sh '''
-                        docker run --rm \
-                        -v $PWD:/app \
-                        -w /app \
-                        taskify-selenium-tests
-                    '''
-                }
+                echo "Running Selenium tests..."
+                sh """
+                docker run --rm --network host $SELENIUM_IMAGE
+                """
             }
         }
     }
 
     post {
         always {
-            sh 'docker ps -a'
+            echo "Sending test results via email..."
+            emailext(
+                subject: "Taskify Selenium Test Results - ${currentBuild.currentResult}",
+                body: "Selenium tests executed on EC2 using Docker.\n\nBuild URL: ${env.BUILD_URL}",
+                to: "${EMAIL_RECIPIENT}"
+            )
+
+            echo "Cleaning up containers..."
+            sh """
+            docker rm -f backend || true
+            docker rm -f frontend || true
+            """
         }
     }
 }
