@@ -6,8 +6,7 @@ pipeline {
         BACKEND_IMAGE = "aimen123/backend-v2:latest"
         SELENIUM_IMAGE = "aimen123/taskify-selenium:latest"
         EMAIL_RECIPIENT = "aimentayyab215@gmail.com"
-        FRONTEND_PORT = "80" // Internal container port
-        BACKEND_PORT = "5000"
+        GMAIL_PASSWORD = credentials('GMAIL_PASSWORD') // Jenkins secret text for Gmail app password
     }
 
     stages {
@@ -15,9 +14,9 @@ pipeline {
             steps {
                 echo "Pulling latest Docker images..."
                 sh """
-                docker pull $FRONTEND_IMAGE
-                docker pull $BACKEND_IMAGE
-                docker pull $SELENIUM_IMAGE
+                    docker pull $FRONTEND_IMAGE
+                    docker pull $BACKEND_IMAGE
+                    docker pull $SELENIUM_IMAGE
                 """
             }
         }
@@ -26,7 +25,7 @@ pipeline {
             steps {
                 echo "Creating Docker network..."
                 sh """
-                docker network inspect taskify-net >/dev/null 2>&1 || docker network create taskify-net
+                    docker network create taskify-net || true
                 """
             }
         }
@@ -35,21 +34,11 @@ pipeline {
             steps {
                 echo "Starting Backend and Frontend containers..."
                 sh """
-                docker rm -f backend frontend >/dev/null 2>&1 || true
+                    docker rm -f backend || true
+                    docker rm -f frontend || true
 
-                docker run -d --name backend --network taskify-net -p $BACKEND_PORT:$BACKEND_PORT $BACKEND_IMAGE
-                docker run -d --name frontend --network taskify-net -p 3000:$FRONTEND_PORT $FRONTEND_IMAGE
-
-                # Wait for frontend to be ready
-                echo "Waiting for frontend to be ready..."
-                for i in \$(seq 1 20); do
-                    if curl -s http://localhost:3000 > /dev/null; then
-                        echo "Frontend is up!"
-                        break
-                    fi
-                    echo "Waiting 3s..."
-                    sleep 3
-                done
+                    docker run -d --name backend --network taskify-net -p 5000:5000 $BACKEND_IMAGE
+                    docker run -d --name frontend --network taskify-net -p 3000:3000 $FRONTEND_IMAGE
                 """
             }
         }
@@ -58,7 +47,7 @@ pipeline {
             steps {
                 echo "Running Selenium tests..."
                 sh """
-                docker run --rm --network taskify-net -e BASE_URL=http://frontend:$FRONTEND_PORT $SELENIUM_IMAGE
+                    docker run --rm --network taskify-net -e BASE_URL=http://frontend:3000 $SELENIUM_IMAGE
                 """
             }
         }
@@ -66,21 +55,32 @@ pipeline {
 
     post {
         always {
-            echo "Cleaning up containers and network..."
-            sh """
-            docker rm -f backend frontend >/dev/null 2>&1 || true
-            docker network rm taskify-net >/dev/null 2>&1 || true
-            """
-
             echo "Sending test results via email..."
             emailext(
-                subject: "Taskify Selenium Test Results - ${currentBuild.currentResult}",
-                body: "Selenium tests executed on EC2 using Docker.\n\nBuild URL: ${env.BUILD_URL}",
-                to: "${EMAIL_RECIPIENT}"
+                subject: "Taskify Pipeline - ${currentBuild.currentResult}",
+                body: """Pipeline run finished.
+
+Build URL: ${env.BUILD_URL}
+""",
+                to: "${EMAIL_RECIPIENT}",
+                from: "aimentayyab215@gmail.com",
+                replyTo: "aimentayyab215@gmail.com",
+                smtpServer: "smtp.gmail.com",
+                smtpPort: "465",
+                useSsl: true,
+                authentication: "aimentayyab215@gmail.com:${GMAIL_PASSWORD}"
             )
+
+            echo "Cleaning up containers and network..."
+            sh """
+                docker rm -f backend || true
+                docker rm -f frontend || true
+                docker network rm taskify-net || true
+            """
         }
     }
 }
+
 
 
 
