@@ -11,7 +11,6 @@ pipeline {
     stages {
         stage('Pull Latest Images') {
             steps {
-                echo "Pulling latest Docker images..."
                 sh """
                     docker pull $FRONTEND_IMAGE
                     docker pull $BACKEND_IMAGE
@@ -22,31 +21,33 @@ pipeline {
 
         stage('Setup Docker Network') {
             steps {
-                echo "Creating Docker network..."
-                sh """
-                    docker network create taskify-net || true
-                """
+                sh "docker network create taskify-net || true"
             }
         }
 
         stage('Run Backend & Frontend') {
             steps {
-                echo "Starting Backend and Frontend containers..."
                 sh """
                     docker rm -f backend || true
                     docker rm -f frontend || true
 
                     docker run -d --name backend --network taskify-net -p 5000:5000 $BACKEND_IMAGE
-                    docker run -d --name frontend --network taskify-net -p 3000:3000 $FRONTEND_IMAGE
+                    docker run -d --name frontend --network taskify-net -p 3000:80 $FRONTEND_IMAGE
                 """
+            }
+        }
+
+        stage('Wait for Frontend') {
+            steps {
+                echo "Waiting for frontend to start..."
+                sh "sleep 15"  // give frontend some time
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                echo "Running Selenium tests..."
                 sh """
-                    docker run --rm --network taskify-net -e BASE_URL=http://frontend:3000 $SELENIUM_IMAGE
+                    docker run --rm --network taskify-net -e BASE_URL=http://frontend:80 $SELENIUM_IMAGE
                 """
             }
         }
@@ -54,17 +55,14 @@ pipeline {
 
     post {
         always {
-            echo "Sending test results via email..."
+            echo "Sending email..."
             emailext(
                 subject: "Taskify Pipeline - ${currentBuild.currentResult}",
-                body: """Pipeline run finished.
-
-Build URL: ${env.BUILD_URL}
-""",
+                body: "Pipeline finished. Check build: ${env.BUILD_URL}",
                 to: "${EMAIL_RECIPIENT}"
             )
 
-            echo "Cleaning up containers and network..."
+            echo "Cleaning up..."
             sh """
                 docker rm -f backend || true
                 docker rm -f frontend || true
