@@ -6,9 +6,13 @@ pipeline {
         BACKEND_IMAGE = "aimen123/backend-v2:latest"
         SELENIUM_IMAGE = "aimen123/taskify-selenium:latest"
         EMAIL_RECIPIENT = "aimentayyab215@gmail.com"
+        FRONTEND_PORT = "3000"
+        BACKEND_PORT = "5000"
+        DOCKER_NETWORK = "taskify-net"
     }
 
     stages {
+
         stage('Pull Latest Images') {
             steps {
                 echo "Pulling latest Docker images..."
@@ -20,17 +24,26 @@ pipeline {
             }
         }
 
+        stage('Setup Docker Network') {
+            steps {
+                echo "Creating Docker network..."
+                sh """
+                docker network create $DOCKER_NETWORK || true
+                """
+            }
+        }
+
         stage('Run Backend & Frontend') {
             steps {
                 echo "Starting Backend and Frontend containers..."
                 sh """
-                # Remove old containers if they exist
+                # Remove old containers
                 docker rm -f backend || true
                 docker rm -f frontend || true
 
-                # Start containers
-                docker run -d --name backend -p 5000:5000 $BACKEND_IMAGE
-                docker run -d --name frontend -p 3000:3000 $FRONTEND_IMAGE
+                # Run containers on custom network
+                docker run -d --name backend --network $DOCKER_NETWORK -p $BACKEND_PORT:5000 $BACKEND_IMAGE
+                docker run -d --name frontend --network $DOCKER_NETWORK -p $FRONTEND_PORT:3000 $FRONTEND_IMAGE
                 """
             }
         }
@@ -39,7 +52,8 @@ pipeline {
             steps {
                 echo "Running Selenium tests..."
                 sh """
-                docker run --rm --network host $SELENIUM_IMAGE
+                # Pass frontend URL as environment variable
+                docker run --rm --network $DOCKER_NETWORK -e BASE_URL=http://frontend:$FRONTEND_PORT $SELENIUM_IMAGE
                 """
             }
         }
@@ -50,7 +64,9 @@ pipeline {
             echo "Sending test results via email..."
             emailext(
                 subject: "Taskify Selenium Test Results - ${currentBuild.currentResult}",
-                body: "Selenium tests executed on EC2 using Docker.\n\nBuild URL: ${env.BUILD_URL}",
+                body: """Selenium tests executed on EC2 using Docker.
+
+Build URL: ${env.BUILD_URL}""",
                 to: "${EMAIL_RECIPIENT}"
             )
 
@@ -58,10 +74,12 @@ pipeline {
             sh """
             docker rm -f backend || true
             docker rm -f frontend || true
+            docker network rm $DOCKER_NETWORK || true
             """
         }
     }
 }
+
 
 
 
