@@ -1,73 +1,93 @@
+
 pipeline {
     agent any
 
     environment {
-        FRONTEND_IMAGE = "aimen123/frontend-v3:latest"
-        BACKEND_IMAGE = "aimen123/backend-v2:latest"
-        SELENIUM_IMAGE = "aimen123/taskify-selenium:latest"
-        EMAIL_RECIPIENT = "aimentayyab215@gmail.com"
+        // Environment variables for Selenium tests
+        BASE_URL = "http://frontend:80"
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
         stage('Pull Latest Images') {
             steps {
-                sh """
-                    docker pull $FRONTEND_IMAGE
-                    docker pull $BACKEND_IMAGE
-                    docker pull $SELENIUM_IMAGE
-                """
+                echo 'Pulling latest Docker images...'
+                sh '''
+                    docker pull aimen123/frontend-v3:latest
+                    docker pull aimen123/backend-v2:latest
+                    docker pull aimen123/taskify-selenium:latest
+                '''
             }
         }
 
         stage('Setup Docker Network') {
             steps {
-                sh "docker network create taskify-net || true"
+                echo 'Creating Docker network...'
+                sh 'docker network create taskify-net || true'
             }
         }
 
         stage('Run Backend & Frontend') {
             steps {
-                sh """
+                echo 'Starting Backend and Frontend containers...'
+                sh '''
                     docker rm -f backend || true
                     docker rm -f frontend || true
 
-                    docker run -d --name backend --network taskify-net -p 5000:5000 $BACKEND_IMAGE
-                    docker run -d --name frontend --network taskify-net -p 3000:80 $FRONTEND_IMAGE
-                """
+                    docker run -d --name backend --network taskify-net -p 5000:5000 aimen123/backend-v2:latest
+                    docker run -d --name frontend --network taskify-net -p 3000:80 aimen123/frontend-v3:latest
+                '''
             }
         }
 
         stage('Wait for Frontend') {
             steps {
-                echo "Waiting for frontend to start..."
-                sh "sleep 15"  // give frontend some time
+                echo 'Waiting for frontend to start...'
+                sh 'sleep 15'
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                sh """
-                    docker run --rm --network taskify-net -e BASE_URL=http://frontend:80 $SELENIUM_IMAGE
-                """
+                echo 'Running Selenium tests...'
+                sh '''
+                    docker run --rm --network taskify-net -e BASE_URL=http://frontend:80 aimen123/taskify-selenium:latest
+                '''
             }
         }
     }
 
     post {
         always {
-            echo "Sending email..."
-            emailext(
-                subject: "Taskify Pipeline - ${currentBuild.currentResult}",
-                body: "Pipeline finished. Check build: ${env.BUILD_URL}",
-                to: "${EMAIL_RECIPIENT}"
-            )
+            stage('Send Email') {
+                steps {
+                    echo 'Sending build results via email...'
+                    emailext(
+                        subject: "${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                        body: """<p>Build Status: ${currentBuild.currentResult}</p>
+                                 <p>Check console output at <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
+                        to: "aimentayyab215@gmail.com",
+                        mimeType: 'text/html'
+                    )
+                }
+            }
 
-            echo "Cleaning up..."
-            sh """
-                docker rm -f backend || true
-                docker rm -f frontend || true
-                docker network rm taskify-net || true
-            """
+            stage('Cleanup') {
+                steps {
+                    echo 'Cleaning up containers and network...'
+                    sh '''
+                        docker rm -f backend || true
+                        docker rm -f frontend || true
+                        docker network rm taskify-net || true
+                    '''
+                }
+            }
         }
     }
 }
