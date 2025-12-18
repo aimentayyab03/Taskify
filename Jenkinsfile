@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Environment variables for Selenium tests
-        BASE_URL = "http://frontend:80"
+        BASE_URL = "http://frontend:3000"
     }
 
     stages {
