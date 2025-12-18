@@ -6,7 +6,6 @@ pipeline {
         BACKEND_IMAGE = "aimen123/backend-v2:latest"
         SELENIUM_IMAGE = "aimen123/taskify-selenium:latest"
         EMAIL_RECIPIENT = "aimentayyab215@gmail.com"
-        GMAIL_PASSWORD = credentials('GMAIL_PASSWORD') // Jenkins secret text for Gmail app password
     }
 
     stages {
@@ -62,13 +61,7 @@ pipeline {
 
 Build URL: ${env.BUILD_URL}
 """,
-                to: "${EMAIL_RECIPIENT}",
-                from: "aimentayyab215@gmail.com",
-                replyTo: "aimentayyab215@gmail.com",
-                smtpServer: "smtp.gmail.com",
-                smtpPort: "465",
-                useSsl: true,
-                authentication: "aimentayyab215@gmail.com:${GMAIL_PASSWORD}"
+                to: "${EMAIL_RECIPIENT}"
             )
 
             echo "Cleaning up containers and network..."
@@ -80,7 +73,6 @@ Build URL: ${env.BUILD_URL}
         }
     }
 }
-
 
 
 
