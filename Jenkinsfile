@@ -6,13 +6,11 @@ pipeline {
         BACKEND_IMAGE = "aimen123/backend-v2:latest"
         SELENIUM_IMAGE = "aimen123/taskify-selenium:latest"
         EMAIL_RECIPIENT = "aimentayyab215@gmail.com"
-        FRONTEND_PORT = "3000"
+        FRONTEND_PORT = "80" // Internal container port
         BACKEND_PORT = "5000"
-        DOCKER_NETWORK = "taskify-net"
     }
 
     stages {
-
         stage('Pull Latest Images') {
             steps {
                 echo "Pulling latest Docker images..."
@@ -28,7 +26,7 @@ pipeline {
             steps {
                 echo "Creating Docker network..."
                 sh """
-                docker network create $DOCKER_NETWORK || true
+                docker network inspect taskify-net >/dev/null 2>&1 || docker network create taskify-net
                 """
             }
         }
@@ -37,13 +35,21 @@ pipeline {
             steps {
                 echo "Starting Backend and Frontend containers..."
                 sh """
-                # Remove old containers
-                docker rm -f backend || true
-                docker rm -f frontend || true
+                docker rm -f backend frontend >/dev/null 2>&1 || true
 
-                # Run containers on custom network
-                docker run -d --name backend --network $DOCKER_NETWORK -p $BACKEND_PORT:5000 $BACKEND_IMAGE
-                docker run -d --name frontend --network $DOCKER_NETWORK -p $FRONTEND_PORT:3000 $FRONTEND_IMAGE
+                docker run -d --name backend --network taskify-net -p $BACKEND_PORT:$BACKEND_PORT $BACKEND_IMAGE
+                docker run -d --name frontend --network taskify-net -p 3000:$FRONTEND_PORT $FRONTEND_IMAGE
+
+                # Wait for frontend to be ready
+                echo "Waiting for frontend to be ready..."
+                for i in \$(seq 1 20); do
+                    if curl -s http://localhost:3000 > /dev/null; then
+                        echo "Frontend is up!"
+                        break
+                    fi
+                    echo "Waiting 3s..."
+                    sleep 3
+                done
                 """
             }
         }
@@ -52,8 +58,7 @@ pipeline {
             steps {
                 echo "Running Selenium tests..."
                 sh """
-                # Pass frontend URL as environment variable
-                docker run --rm --network $DOCKER_NETWORK -e BASE_URL=http://frontend:$FRONTEND_PORT $SELENIUM_IMAGE
+                docker run --rm --network taskify-net -e BASE_URL=http://frontend:$FRONTEND_PORT $SELENIUM_IMAGE
                 """
             }
         }
@@ -61,26 +66,21 @@ pipeline {
 
     post {
         always {
+            echo "Cleaning up containers and network..."
+            sh """
+            docker rm -f backend frontend >/dev/null 2>&1 || true
+            docker network rm taskify-net >/dev/null 2>&1 || true
+            """
+
             echo "Sending test results via email..."
             emailext(
                 subject: "Taskify Selenium Test Results - ${currentBuild.currentResult}",
-                body: """Selenium tests executed on EC2 using Docker.
-
-Build URL: ${env.BUILD_URL}""",
+                body: "Selenium tests executed on EC2 using Docker.\n\nBuild URL: ${env.BUILD_URL}",
                 to: "${EMAIL_RECIPIENT}"
             )
-
-            echo "Cleaning up containers..."
-            sh """
-            docker rm -f backend || true
-            docker rm -f frontend || true
-            docker network rm $DOCKER_NETWORK || true
-            """
         }
     }
 }
-
-
 
 
 
