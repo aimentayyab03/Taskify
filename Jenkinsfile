@@ -69,7 +69,7 @@ pipeline {
                 subject: "${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
                 body: """<p>Build Status: ${currentBuild.currentResult}</p>
                          <p>Check console output at <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
-                to: "aimentayyab215@gmail.com",
+                to: "qasimalik@gmail.com",
                 mimeType: 'text/html'
             )
 
