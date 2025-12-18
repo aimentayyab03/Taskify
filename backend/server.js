@@ -11,11 +11,8 @@ const app = express();
 const allowedOrigins = [
    'http://localhost:3000',   // React dev
   'http://localhost:8080',   // React container frontend
-  'http://16.16.170.241',    // EC2 frontend
-  'http://16.16.170.241:5000',// EC2 backend (optional)
-  'http://16.16.170.241:8082',
-  'http://51.20.10.38:3000', 
-  'http://51.20.10.38:5000 ' 
+  'http://51.20.106.94:3000', 
+  'http://51.20.106.94:5000' 
 ];
 
 // Enable CORS
