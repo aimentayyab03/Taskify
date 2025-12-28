@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: aimen123/backend-v2
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URI
+          value: "mongodb+srv://aimentayyab215_db_user:aimentayyab12@tasks.u0nwhtm.mongodb.net/"
+        - name: JWT_SECRET
+          value: "7b9ab08e43eeb8245920990f5eea7c513a495338b5fe8ec3e51971ea46077e08bd3df090c2c49e8ed0c049fb63fe59d7d347f5bc955564f20846d9a5db0dc9eb"
+        - name: PORT
+          value: "5000"
