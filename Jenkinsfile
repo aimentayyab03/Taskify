@@ -1,71 +1,85 @@
+
 pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USERNAME = 'aimen123'
-        DOCKERHUB_PASSWORD = 'taskify12345'
+        // Environment variables for Selenium tests
+        BASE_URL = "http://frontend:80"
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/aimentayyab03/Taskify.git'
+                echo 'Checking out source code...'
+                checkout scm
             }
         }
 
-        stage('Login to DockerHub') {
+        stage('Pull Latest Images') {
             steps {
-                script {
-                    sh "echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin"
-                }
-            }
-        }
-
-        stage('Pull Backend & Frontend Images') {
-            steps {
+                echo 'Pulling latest Docker images...'
                 sh '''
-                    docker pull aimen123/backend:latest
-                    docker pull aimen123/frontend:latest
+                    docker pull aimen123/frontend-v3:latest
+                    docker pull aimen123/backend-v2:latest
+                    docker pull aimen123/taskify-selenium:latest
                 '''
             }
         }
 
-        stage('Run Backend & Frontend Containers') {
+        stage('Setup Docker Network') {
             steps {
+                echo 'Creating Docker network...'
+                sh 'docker network create taskify-net || true'
+            }
+        }
+
+        stage('Run Backend & Frontend') {
+            steps {
+                echo 'Starting Backend and Frontend containers...'
                 sh '''
-                    docker rm -f backend-jenkins frontend-jenkins mongo-jenkins || true
-                    docker run -d --name backend-jenkins -p 5000:5000 aimen123/backend:latest
-                    docker run -d --name frontend-jenkins -p 3000:3000 aimen123/frontend:latest
-                    docker run -d --name mongo-jenkins -p 27017:27017 mongo:latest
+                    docker rm -f backend || true
+                    docker rm -f frontend || true
+
+                    docker run -d --name backend --network taskify-net -p 5000:5000 aimen123/backend-v2:latest
+                    docker run -d --name frontend --network taskify-net -p 3000:80 aimen123/frontend-v3:latest
                 '''
             }
         }
 
-        stage('Build Selenium Test Image') {
+        stage('Wait for Frontend') {
             steps {
-                dir('selenium-tests') {
-                    sh 'docker build -t taskify-selenium-tests .'
-                }
+                echo 'Waiting for frontend to start...'
+                sh 'sleep 15'
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                dir('selenium-tests') {
-                    sh '''
-                        docker run --rm \
-                        -v $PWD:/app \
-                        -w /app \
-                        taskify-selenium-tests
-                    '''
-                }
+                echo 'Running Selenium tests...'
+                sh '''
+                    docker run --rm --network taskify-net -e BASE_URL=http://frontend:80 aimen123/taskify-selenium:latest
+                '''
             }
         }
     }
 
     post {
         always {
-            sh 'docker ps -a'
+            echo 'Sending build results via email...'
+            emailext(
+                subject: "${currentBuild.fullDisplayName} - ${currentBuild.currentResult}",
+                body: """<p>Build Status: ${currentBuild.currentResult}</p>
+                         <p>Check console output at <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
+                to: "qasimalik@gmail.com",
+                mimeType: 'text/html'
+            )
+
+            echo 'Cleaning up containers and network...'
+            sh '''
+                docker rm -f backend || true
+                docker rm -f frontend || true
+                docker network rm taskify-net || true
+            '''
         }
     }
 }
